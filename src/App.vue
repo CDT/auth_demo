@@ -12,8 +12,6 @@
 
 <script>
 import Navigation from 'components/navigation'
-import { USER_REQUEST } from 'actions/user'
-import { AUTH_LOGOUT } from 'actions/auth'
 import SqreenFooter from './components/footer/index.vue'
 import axios from 'axios'
 
@@ -24,14 +22,14 @@ export default {
   name: 'app',
   created: function () {
     if (this.$store.getters.isAuthenticated) {
-      this.$store.dispatch(USER_REQUEST)
+      this.$store.dispatch('USER_REQUEST')
     }
     // check for unauthorized responses:
     axios.interceptors.response.use(undefined, function (err) {
       return new Promise(function (resolve, reject) {
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
           // if you ever get an unauthorized, logout the user
-          this.$store.dispatch(AUTH_LOGOUT)
+          this.$store.dispatch('AUTH_LOGOUT')
           // you can also redirect to /login if needed !
         }
         throw err

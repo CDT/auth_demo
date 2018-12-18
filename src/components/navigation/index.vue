@@ -62,13 +62,12 @@
 
 <script>
   import { mapGetters, mapState } from 'vuex'
-  import { AUTH_LOGOUT } from 'actions/auth'
 
   export default {
     name: 'navigation',
     methods: {
       logout: function () {
-        this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
+        this.$store.dispatch('AUTH_LOGOUT').then(() => this.$router.push('/login'))
       }
     },
     computed: {

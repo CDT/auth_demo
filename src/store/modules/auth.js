@@ -1,6 +1,4 @@
 /* eslint-disable promise/param-names */
-import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
-import { USER_REQUEST } from '../actions/user'
 import apiCall from 'utils/api'
 import axios from 'axios'
 
@@ -12,29 +10,29 @@ const getters = {
 }
 
 const actions = {
-  [AUTH_REQUEST]: ({commit, dispatch}, user) => {
+  AUTH_REQUEST: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => {
-      commit(AUTH_REQUEST)
+      commit('AUTH_REQUEST')
       apiCall({url: 'auth', data: user, method: 'POST'})
       .then(resp => {
         localStorage.setItem('user-token', resp.token)
         // Here set the header of your ajax library to the token value.
         // example with axios
         axios.defaults.headers.common['Authorization'] = resp.token
-        commit(AUTH_SUCCESS, resp)
-        dispatch(USER_REQUEST)
+        commit('AUTH_SUCCESS', resp)
+        dispatch('USER_REQUEST')
         resolve(resp)
       })
       .catch(err => {
-        commit(AUTH_ERROR, err)
+        commit('AUTH_ERROR', err)
         localStorage.removeItem('user-token')
         reject(err)
       })
     })
   },
-  [AUTH_LOGOUT]: ({commit, dispatch}) => {
+  AUTH_LOGOUT: ({commit, dispatch}) => {
     return new Promise((resolve, reject) => {
-      commit(AUTH_LOGOUT)
+      commit('AUTH_LOGOUT')
       localStorage.removeItem('user-token')
       // remove the axios default header
       delete axios.defaults.headers.common['Authorization']
@@ -44,19 +42,19 @@ const actions = {
 }
 
 const mutations = {
-  [AUTH_REQUEST]: (state) => {
+  AUTH_REQUEST: (state) => {
     state.status = 'loading'
   },
-  [AUTH_SUCCESS]: (state, resp) => {
+  AUTH_SUCCESS: (state, resp) => {
     state.status = 'success'
     state.token = resp.token
     state.hasLoadedOnce = true
   },
-  [AUTH_ERROR]: (state) => {
+  AUTH_ERROR: (state) => {
     state.status = 'error'
     state.hasLoadedOnce = true
   },
-  [AUTH_LOGOUT]: (state) => {
+  AUTH_LOGOUT: (state) => {
     state.token = ''
   }
 }
